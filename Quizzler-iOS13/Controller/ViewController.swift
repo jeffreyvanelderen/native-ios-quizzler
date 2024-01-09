@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var progressBar: UIProgressView!
+    @IBOutlet weak var resultsLabel: UILabel!
     
     @IBOutlet weak var trueButton: UIButton!
     @IBOutlet weak var falseButton: UIButton!
@@ -37,7 +38,7 @@ class ViewController: UIViewController {
         // Finish
         if (quizMain.index == quizMain.questions.count) {
             // Done. Finish up
-            displayAlertWithMessage(message: "Done! You got \(quizMain.correctAnswers)/\(quizMain.questions.count)");
+            displayAlertWithMessage(message: "Done! You got \(quizMain.getScore())");
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 self.reset();
             }
@@ -49,6 +50,7 @@ class ViewController: UIViewController {
         if (question != nil) {
             questionLabel.text = question!.text
         }
+        resultsLabel.text = "Score: \(quizMain.getScore())";
     }
     
     private func showQuestionResultOnButton(button: UIButton, isUserAnswerCorrect: Bool) {

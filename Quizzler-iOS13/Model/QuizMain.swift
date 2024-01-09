@@ -39,6 +39,10 @@ struct QuizMain {
         return Float(self.index + 1) / Float(self.questions.count);
     }
     
+    func getScore() -> String {
+        return "\(self.correctAnswers)/\(self.questions.count)";
+    }
+    
     mutating func answerQuestion(answer: String) -> Bool {
         let question = getCurrentQuestion();
         let isUserAnswerCorrect = answer == question?.answer;

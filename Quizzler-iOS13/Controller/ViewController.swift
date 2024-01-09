@@ -16,24 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var trueButton: UIButton!
     @IBOutlet weak var falseButton: UIButton!
     
-    var index = 0;
-    let questions: [Question] =
-    [
-        Question(text: "A slug's blood is green.", answer: "True"),
-        Question(text: "Approximately one quarter of human bones are in the feet.", answer: "True"),
-        Question(text: "The total surface area of two human lungs is approximately 70 square metres.", answer: "True"),
-        Question(text: "In West Virginia, USA, if you accidentally hit an animal with your car, you are free to take it home to eat.", answer: "True"),
-        Question(text: "In London, UK, if you happen to die in the House of Parliament, you are technically entitled to a state funeral, because the building is considered too sacred a place.", answer: "False"),
-        Question(text: "It is illegal to pee in the Ocean in Portugal.", answer: "True"),
-        Question(text: "You can lead a cow down stairs but not up stairs.", answer: "False"),
-        Question(text: "Google was originally called 'Backrub'.", answer: "True"),
-        Question(text: "Buzz Aldrin's mother's maiden name was 'Moon'.", answer: "True"),
-        Question(text: "The loudest sound produced by any animal is 188 decibels. That animal is the African Elephant.", answer: "False"),
-        Question(text: "No piece of square dry paper can be folded in half more than 7 times.", answer: "False"),
-        Question(text: "Chocolate affects a dog's heart and nervous system; a few ounces are enough to kill a small dog.", answer: "True")
-
-    ];
-    var correctAnswers = 0;
+    var quizMain = QuizMain();
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,24 +27,17 @@ class ViewController: UIViewController {
 
     // Triggered by either true or false
     @IBAction func onAnswerPress(_ sender: UIButton) {
-        let question = questions[index];
-
-        let userAnswer = sender.currentTitle;
-
-        let isUserAnswerCorrect = userAnswer == question.answer;
-        if (isUserAnswerCorrect) {
-            correctAnswers += 1;
-        }
+        let isUserAnswerCorrect = quizMain.answerQuestion(answer: sender.currentTitle!);
         showQuestionResultOnButton(button: sender, isUserAnswerCorrect: isUserAnswerCorrect)
         
-        progressBar.setProgress(Float(index + 1) / Float(questions.count), animated: true)
-        index += 1;
+        progressBar.setProgress(quizMain.getProgress(), animated: true);
+        quizMain.nextQuestion();
         setQuestionText();
         
         // Finish
-        if (index == questions.count) {
+        if (quizMain.index == quizMain.questions.count) {
             // Done. Finish up
-            displayAlertWithMessage(message: "Done! You got \(correctAnswers)/\(questions.count)");
+            displayAlertWithMessage(message: "Done! You got \(quizMain.correctAnswers)/\(quizMain.questions.count)");
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 self.reset();
             }
@@ -69,8 +45,9 @@ class ViewController: UIViewController {
     }
     
     private func setQuestionText() {
-        if (index < questions.count) {
-            questionLabel.text = questions[index].text;
+        let question = quizMain.getCurrentQuestion();
+        if (question != nil) {
+            questionLabel.text = question!.text
         }
     }
     
@@ -96,8 +73,7 @@ class ViewController: UIViewController {
     
     private func reset() {
         // Start again
-        index = 0;
-        correctAnswers = 0;
+        quizMain.reset();
         progressBar.setProgress(0.0, animated: true);
         setQuestionText();
     }
